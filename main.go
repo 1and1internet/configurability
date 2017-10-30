@@ -1,7 +1,7 @@
 package main
 
 import (
-	"configurability/file_helpers"
+	"github.com/1and1internet/configurability/file_helpers"
 )
 
 func main() {

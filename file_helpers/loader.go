@@ -4,7 +4,7 @@ import (
 	"os"
 	"log"
 	"io/ioutil"
-	"configurability/customisor"
+	"github.com/1and1internet/configurability/customisor"
 	"path"
 )
 
