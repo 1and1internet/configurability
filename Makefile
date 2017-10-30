@@ -13,4 +13,4 @@ main:
 plugins: ${PLUGINS_FOLDER} ${PLUGINS}
 
 ${PLUGINS}:
-	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/$@.so plugins/$@/*.go
+	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/$@.so plugins/$@/$@.go

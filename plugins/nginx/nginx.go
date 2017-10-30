@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
-	"github.com/1and1internet/configurability_pluggable/plugins"
+	"github.com/1and1internet/configurability/plugins"
 )
 
 type NginxJsonData struct {

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/go-ini/ini"
 	"strings"
-	"github.com/1and1internet/configurability_pluggable/plugins"
+	"github.com/1and1internet/configurability/plugins"
 )
 
 type MysqlJsonData struct {

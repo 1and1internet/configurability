@@ -4,7 +4,7 @@ import (
 	"github.com/go-ini/ini"
 	"encoding/json"
 	"log"
-	"github.com/1and1internet/configurability_pluggable/plugins"
+	"github.com/1and1internet/configurability/plugins"
 )
 
 type PhpJsonData struct {
