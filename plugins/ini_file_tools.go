@@ -1,4 +1,4 @@
-package customisor
+package plugins
 
 import (
 	"github.com/go-ini/ini"
@@ -23,7 +23,7 @@ func get_from_section(iniSection ini.Section, key string, defaultValue string, d
 	}
 }
 
-func unpack_etc_ini(section ini.Section, allowBooleanKeys bool) (bool, *ini.File, string) {
+func UnpackEtcIni(section ini.Section, allowBooleanKeys bool) (bool, *ini.File, string) {
 	var iniFilePath = ""
 	if get_from_section(section, "enabled", "false", true) != "true" {
 		return false, nil, ""

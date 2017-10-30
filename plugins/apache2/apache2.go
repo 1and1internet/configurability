@@ -1,6 +1,7 @@
-package customisor
+package main
 
 import (
+	"C"
 	"github.com/go-ini/ini"
 	"encoding/json"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"github.com/1and1internet/configurability_pluggable/plugins"
 )
 
 type ApacheJsonData struct {
@@ -64,7 +66,7 @@ func (apache *ApacheParserData) updateApacheConfig(source, dest string) {
 		write_needed := false
 		new_lines := []string{}
 		full_file_path := path.Join(source, file_path.Name())
-		current_lines := ReadLinesFromFile(full_file_path)
+		current_lines := plugins.ReadLinesFromFile(full_file_path)
 
 		for _, line := range current_lines {
 			new_line := regex.ReplaceAllString(line, apache.JsonData.DocumentRoot)
@@ -74,7 +76,7 @@ func (apache *ApacheParserData) updateApacheConfig(source, dest string) {
 
 		if write_needed {
 			full_file_path := path.Join(dest, file_path.Name())
-			WriteLinesToFile(full_file_path, new_lines)
+			plugins.WriteLinesToFile(full_file_path, new_lines)
 		}
 	}
 }
@@ -99,11 +101,11 @@ func (apache *ApacheParserData) DocrootFix()  {
 
 		// Create the document root folder if it's missing
 		document_root_path := path.Join(apache.TestOutputFolder, "/var", "www", document_root)
-		EnsureDirExists(document_root_path)
+		plugins.EnsureDirExists(document_root_path)
 
-		EnsureDirExists(sites_enabled_dest_directory)
-		EnsureDirExists(conf_enabled_dest_directory)
-		EnsureDirExists(mods_enabled_dest_directory)
+		plugins.EnsureDirExists(sites_enabled_dest_directory)
+		plugins.EnsureDirExists(conf_enabled_dest_directory)
+		plugins.EnsureDirExists(mods_enabled_dest_directory)
 
 		apache.updateApacheConfig(sites_enabled_source_directory, sites_enabled_dest_directory)
 		apache.updateApacheConfig(conf_enabled_source_directory, conf_enabled_dest_directory)
@@ -114,7 +116,7 @@ func (apache *ApacheParserData) DocrootFix()  {
 func (apache *ApacheParserData) GzipFix() {
 	if apache.JsonData.Gzip != "" {
 		mods_enabled_dest_directory := path.Join(apache.ApacheDestDirectory, "mods-enabled")
-		EnsureDirExists(mods_enabled_dest_directory)
+		plugins.EnsureDirExists(mods_enabled_dest_directory)
 		if apache.GzipState == "off" {
 			for _, file_path := range []string{"deflate.conf", "deflate.load"} {
 				full_file_path := path.Join(mods_enabled_dest_directory, file_path)
@@ -139,9 +141,21 @@ func (apache *ApacheParserData) GzipFix() {
 }
 
 func (apache *ApacheParserData) ApplyCustomisations() {
-	enabled, _, _ := unpack_etc_ini(apache.Section, false)
+	enabled, _, _ := plugins.UnpackEtcIni(apache.Section, false)
 	if enabled {
 		apache.DocrootFix()
 		apache.GzipFix()
 	}
+}
+
+func Customise(content []byte, section *ini.Section, configurationFileName string) (bool) {
+	if configurationFileName == "configuration-apache2.json" {
+		log.Println("Process as apache2/json")
+		apache := ApacheParserData{}
+		apache.ApacheJsonLoader(content)
+		apache.Section = *section
+		apache.ApplyCustomisations()
+		return true
+	}
+	return false
 }

@@ -1,4 +1,4 @@
-package customisor
+package main
 
 import (
 	"github.com/go-ini/ini"
@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"github.com/1and1internet/configurability_pluggable/plugins"
 )
 
 type NginxJsonData struct {
@@ -67,7 +68,7 @@ func (nginx *NginxParserData) DocrootFix()  {
 
 		// Create the document root folder if it's missing
 		document_root_path := path.Join(nginx.TestOutputFolder, "/var", "www", document_root)
-		EnsureDirExists(document_root_path)
+		plugins.EnsureDirExists(document_root_path)
 
 		variable_regex := regexp.MustCompile(fmt.Sprintf("\\${?%s}?", document_root_key))
 		root_command_regex := regexp.MustCompile("root /var/www/.*;")
@@ -83,7 +84,7 @@ func (nginx *NginxParserData) DocrootFix()  {
 			write_needed := false
 			new_lines := []string{}
 			full_file_path := path.Join(sites_enabled_source_directory, file_path.Name())
-			current_lines := ReadLinesFromFile(full_file_path)
+			current_lines := plugins.ReadLinesFromFile(full_file_path)
 
 			for _, line := range current_lines {
 				new_line := variable_regex.ReplaceAllString(line, document_root)
@@ -94,7 +95,7 @@ func (nginx *NginxParserData) DocrootFix()  {
 
 			if write_needed {
 				full_file_path := path.Join(sites_enabled_dest_directory, file_path.Name())
-				WriteLinesToFile(full_file_path, new_lines)
+				plugins.WriteLinesToFile(full_file_path, new_lines)
 			}
 		}
 	}
@@ -108,7 +109,7 @@ func (nginx *NginxParserData) GzipFix() {
 		gzip_command_regex := regexp.MustCompile("gzip \\w*;")
 		gzip_level_command_regex := regexp.MustCompile("gzip_comp_level \\d*;")
 
-		current_lines := ReadLinesFromFile(nginx.GzipSourceFilePath)
+		current_lines := plugins.ReadLinesFromFile(nginx.GzipSourceFilePath)
 		new_lines := []string{}
 		write_needed := false
 
@@ -120,16 +121,27 @@ func (nginx *NginxParserData) GzipFix() {
 		}
 
 		if write_needed {
-			WriteLinesToFile(nginx.GzipDestFilePath, new_lines)
+			plugins.WriteLinesToFile(nginx.GzipDestFilePath, new_lines)
 		}
 	}
 }
 
 func (nginx *NginxParserData) ApplyCustomisations() {
-	enabled, _, _ := unpack_etc_ini(nginx.Section, false)
+	enabled, _, _ := plugins.UnpackEtcIni(nginx.Section, false)
 	if enabled {
 		nginx.DocrootFix()
 		nginx.GzipFix()
 	}
 }
 
+func Customise(content []byte, section *ini.Section, configurationFileName string) (bool) {
+	if configurationFileName == "configuration-nginx.json" {
+		log.Println("Process as nginx/json")
+		nginx := NginxParserData{}
+		nginx.NginxJsonLoader(content)
+		nginx.Section = *section
+		nginx.ApplyCustomisations()
+		return true
+	}
+	return false
+}
