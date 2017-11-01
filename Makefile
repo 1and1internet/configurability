@@ -7,10 +7,13 @@ all: main ${PLUGINS}
 godeps:
 	go get
 
-main: godeps
+vendorupdate:
+    govendor update +external
+
+main:
 	go build -o ${MAIN_FOLDER}/configurator main.go
 
 plugins: ${PLUGINS_FOLDER} ${PLUGINS}
 
-${PLUGINS}: godeps
+${PLUGINS}:
 	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/$@.so plugins/$@/$@.go
