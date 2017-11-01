@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"github.com/go-ini/ini"
 	"encoding/json"
 	"log"

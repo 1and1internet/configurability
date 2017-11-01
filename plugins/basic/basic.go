@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"gopkg.in/yaml.v2"
 	"log"
 	"github.com/go-ini/ini"
