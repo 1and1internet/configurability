@@ -22,7 +22,7 @@ func getPluginFolder() (string) {
 
 func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*ini.Section) (bool) {
 	var customisationFilePathMap map[string]string = file_helpers.MapCustomisationFolder()
-	found := false
+	customised := false
 	for _, section := range etcConfigSections{
 		var configuration_file_name = section.Key("configuration_file_name")
 		customisationFilePath, ok := customisationFilePathMap[configuration_file_name.String()]
@@ -34,13 +34,13 @@ func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*
 				continue
 			}
 
-			found = customisorSymbol.(func([]byte, *ini.Section, string) bool)(content, section, configuration_file_name.String())
-			if found {
+			customised = customisorSymbol.(func([]byte, *ini.Section, string) bool)(content, section, configuration_file_name.String())
+			if customised {
 				break
 			}
 		}
 	}
-	return found
+	return customised
 }
 
 func readAllEtcConfigSections() ([]*ini.Section) {
@@ -79,9 +79,8 @@ func main() {
 			if err != nil {
 				log.Printf("Could not lookup 'Customise' in %s\n", file)
 			}
-			found := LoadCustomisationData(customisorSymbol, etcConfigSections)
-			if !found {
-				log.Printf("WARNING: No plugin for %s", file)
+			if !LoadCustomisationData(customisorSymbol, etcConfigSections) {
+				log.Printf("WARNING: No customisation by %s", file)
 			}
 		}
 	} else {
