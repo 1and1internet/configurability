@@ -8,7 +8,7 @@ godeps:
 	go get
 
 vendorupdate:
-    govendor update +external
+	govendor update +external
 
 main:
 	go build -o ${MAIN_FOLDER}/configurator main.go
