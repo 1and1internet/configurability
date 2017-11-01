@@ -8,7 +8,10 @@ import (
 )
 
 func get_customisation_folder() (string) {
-	var confDir = os.Getenv("CONFIGURABILITY_DIR")
+	confDir, ok := os.LookupEnv("CONFIGURABILITY_DIR")
+	if !ok {
+		confDir = "/opt/configurability/files"
+	}
 	return confDir
 }
 
@@ -41,8 +44,8 @@ func get_folder_content_map(folder string) (map[string]string) {
 }
 
 func get_etc_config_folder() (string) {
-	var confDir = os.Getenv("CONFIGURABILITY_INTERNAL")
-	if confDir == "" {
+	confDir, ok := os.LookupEnv("CONFIGURABILITY_INTERNAL")
+	if !ok {
 		confDir = "/etc/configurability/"
 	}
 	return confDir
