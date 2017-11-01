@@ -12,10 +12,6 @@ import (
 	"io/ioutil"
 )
 
-type CustomisorInterface interface {
-	Customise([]byte, *ini.Section, string) bool
-}
-
 func getPluginFolder() (string) {
 	pluginFolder, ok := os.LookupEnv("CONF_PLUGIN_FOLDER")
 	if ok {
@@ -24,7 +20,7 @@ func getPluginFolder() (string) {
 	return "/opt/configurability/goplugins"
 }
 
-func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*ini.Section) {
+func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*ini.Section) (bool) {
 	var customisationFilePathMap map[string]string = file_helpers.MapCustomisationFolder()
 	found := false
 	for _, section := range etcConfigSections{
@@ -44,9 +40,7 @@ func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*
 			}
 		}
 	}
-	if !found {
-		log.Printf("WARNING: No plugin for symbol %v", customisorSymbol)
-	}
+	return found
 }
 
 func readAllEtcConfigSections() ([]*ini.Section) {
@@ -85,7 +79,10 @@ func main() {
 			if err != nil {
 				log.Printf("Could not lookup 'Customise' in %s\n", file)
 			}
-			LoadCustomisationData(customisorSymbol, etcConfigSections)
+			found := LoadCustomisationData(customisorSymbol, etcConfigSections)
+			if !found {
+				log.Printf("WARNING: No plugin for %s", file)
+			}
 		}
 	} else {
 		log.Printf("Fileglob error: %s\n", err)
