@@ -19,11 +19,10 @@ func get_folder_content_list(folder string) ([]string) {
 	var filePaths []string
 	if folder != "" {
 		files, err := ioutil.ReadDir(folder)
-		if err != nil {
-			log.Fatal(err)
-		}
-		for _, file := range files {
-			filePaths = append(filePaths, path.Join(folder, file.Name()))
+		if err == nil {
+			for _, file := range files {
+				filePaths = append(filePaths, path.Join(folder, file.Name()))
+			}
 		}
 	}
 	return filePaths
