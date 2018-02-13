@@ -100,11 +100,8 @@ func (mongoData *MongoData) LoadConfig(section ini.Section) bool {
 func (data *MongoData) Save() {
 	var test_output_folder = os.Getenv("TEST_OUTPUT_FOLDER")
 	var target_output_file = data.SourceConfigFilePath
-	if test_output_folder == "" {
-		log.Println("Writing config file to it's original location ", data.SourceConfigFilePath)
-	} else {
+	if test_output_folder != "" {
 		target_output_file = strings.Join([]string{test_output_folder, path.Base(data.SourceConfigFilePath)}, "/")
-		log.Println("Writing config file to ", target_output_file)
 	}
 
 	yamlData, err := yaml.Marshal(data.Config)
@@ -112,6 +109,7 @@ func (data *MongoData) Save() {
 		log.Printf("Error marshalling data for yaml: %v", err)
 		return
 	}
+	log.Printf("Writing mongodb config to %s:  \n\n%s\n", target_output_file, string(yamlData))
 	yamlDataList := strings.Split(string(yamlData), "\n")
 	plugins.WriteLinesToFile(target_output_file, yamlDataList)
 }
