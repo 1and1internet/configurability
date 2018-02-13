@@ -11,7 +11,7 @@ import (
 	"fmt"
 )
 
-func get_from_section(iniSection ini.Section, key string, defaultValue string, doToLower bool) (string) {
+func GetFromSection(iniSection ini.Section, key string, defaultValue string, doToLower bool) (string) {
 	if iniSection.HasKey(key) {
 		if doToLower {
 			return strings.ToLower(iniSection.Key(key).String())
@@ -25,10 +25,10 @@ func get_from_section(iniSection ini.Section, key string, defaultValue string, d
 
 func UnpackEtcIni(section ini.Section, allowBooleanKeys bool) (bool, *ini.File, string) {
 	var iniFilePath = ""
-	if get_from_section(section, "enabled", "false", true) != "true" {
+	if GetFromSection(section, "enabled", "false", true) != "true" {
 		return false, nil, ""
 	}
-	iniFilePath = get_from_section(section, "ini_file_path", "", false)
+	iniFilePath = GetFromSection(section, "ini_file_path", "", false)
 	if iniFilePath == "" {
 		return true, nil, ""
 	}

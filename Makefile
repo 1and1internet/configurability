@@ -1,4 +1,4 @@
-PLUGINS = apache2 basic mysql nginx php
+PLUGINS = apache2 basic mysql nginx php mongod
 MAIN_FOLDER = bin
 PLUGINS_FOLDER = bin/plugins
 
