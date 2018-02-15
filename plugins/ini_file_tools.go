@@ -1,17 +1,18 @@
 package plugins
 
 import (
-	"github.com/go-ini/ini"
-	"strings"
+	"bufio"
+	"fmt"
 	"log"
 	"os"
-	"strconv"
-	"bufio"
 	"path"
-	"fmt"
+	"strconv"
+	"strings"
+
+	"github.com/go-ini/ini"
 )
 
-func GetFromSection(iniSection ini.Section, key string, defaultValue string, doToLower bool) (string) {
+func GetFromSection(iniSection ini.Section, key string, defaultValue string, doToLower bool) string {
 	if iniSection.HasKey(key) {
 		if doToLower {
 			return strings.ToLower(iniSection.Key(key).String())
@@ -55,7 +56,7 @@ func UnpackEtcIni(section ini.Section, allowBooleanKeys bool) (bool, *ini.File, 
 	}
 }
 
-func ReadEtcConfiguration(iniFileName string) (*ini.Section) {
+func ReadEtcConfiguration(iniFileName string) *ini.Section {
 	cfg, err := ini.Load(iniFileName)
 	if err != nil {
 		log.Fatalf("Ini Loader error: [%s] [%v]", iniFileName, err)
@@ -104,17 +105,17 @@ func UpdateInt64Key(title string, section *ini.Section, key string, val int64) {
 }
 
 func EnsureDirExists(folderName string) {
-		stat, err := os.Stat(folderName)
-		if err != nil || !stat.IsDir() {
-			mkdirerr := os.MkdirAll(folderName, 0777)
-			if mkdirerr != nil {
-				log.Printf("Could not create folder %s", folderName)
-				return
-			}
+	stat, err := os.Stat(folderName)
+	if err != nil || !stat.IsDir() {
+		mkdirerr := os.MkdirAll(folderName, 0777)
+		if mkdirerr != nil {
+			log.Printf("Could not create folder %s", folderName)
+			return
 		}
+	}
 }
 
-func ReadLinesFromFile(full_file_path string) ([]string) {
+func ReadLinesFromFile(full_file_path string) []string {
 	lines := []string{}
 	stat, err := os.Stat(full_file_path)
 	if err == nil && !stat.IsDir() {
@@ -138,13 +139,10 @@ func ReadLinesFromFile(full_file_path string) ([]string) {
 func WriteLinesToFile(full_file_path string, lines_to_write []string) {
 	EnsureDirExists(path.Dir(full_file_path))
 
-	fh, err := os.OpenFile(full_file_path, os.O_WRONLY, 0777)
+	fh, err := os.OpenFile(full_file_path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0777)
 	if err != nil {
-		fh, err = os.Create(full_file_path)
-		if err != nil {
-			log.Printf("Could not write to %s: %s", full_file_path, err)
-			return
-		}
+		log.Printf("Could not write to %s: %s", full_file_path, err)
+		return
 	}
 	for _, line := range lines_to_write {
 		fh.WriteString(fmt.Sprintf("%s\n", line))
