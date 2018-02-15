@@ -1,4 +1,4 @@
-{"net": {"bindIp": "2.2.3.3"},
+{"net": {"ssl": {"mode":"enabled"}},
 "processManagement": {"timeZoneInfo": "/usr/share/ozoneinfo"},
 "setParameter": {"enableLocalhostAuthBypass": true}
 }

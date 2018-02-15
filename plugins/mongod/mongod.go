@@ -74,6 +74,16 @@ type MongoNetConfig struct {
 	ServiceExecutor string              `yaml:"serviceExecutor"`
 }
 
+type MongoNetAltConfig struct {
+	Port            int                 `yaml:"port"`
+	BindIpAll       bool                `yaml:"bindIpAll"`
+	WireObjectCheck bool                `yaml:"wireObjectCheck"`
+	Ipv6            bool                `yaml:"ipv6"`
+	Ssl             MongoNetNoSslConfig `yaml:"ssl"`
+	Compression     MongoNetCompression `yaml:"compression"`
+	ServiceExecutor string              `yaml:"serviceExecutor"`
+}
+
 type MongoNetSslConfig struct {
 	Mode                                string `yaml:"mode"`
 	PEMKeyFile                          string `yaml:"PEMKeyFile"`
@@ -87,6 +97,10 @@ type MongoNetSslConfig struct {
 	AllowInvalidHostnames               bool   `yaml:"allowInvalidHostnames"`
 	DisabledProtocols                   string `yaml:"disabledProtocols"`
 	FIPSMode                            bool   `yaml:"FIPSMode"`
+}
+
+type MongoNetNoSslConfig struct {
+	Mode string `yaml:"mode"`
 }
 
 type MongoNetCompression struct {
@@ -109,6 +123,12 @@ type MongoYamlData struct {
 	// SystemLog          MongoSystemLogConfig          `yaml:"systemLog"`
 	Net MongoNetConfig `yaml:"net"`
 	// ProcessManagement  MongoProcessManagementConfig  `yaml:"processManagement"`
+	Security MongoSecurityConfig `yaml:"security"`
+}
+
+type MongoYamlNoSslData struct {
+	Storage  MongoStorageConfig  `yaml:"storage"`
+	Net      MongoNetAltConfig   `yaml:"net"`
 	Security MongoSecurityConfig `yaml:"security"`
 }
 
@@ -177,6 +197,24 @@ func (mongoData *MongoData) ApplyLocalEnvironmentConfig() {
 	mongoData.ApplyLocalStorageConfig()
 }
 
+func (data *MongoData) NoSslConversion(yamlData []byte) []byte {
+	// We don't even use SSL yet, but if we ever do then this will be useful.
+	// When ssl is enabled, the rest of the ssl parameters are used. If they are
+	// there when ssl is disabled then mongo complains, so we repackage without them.
+	if data.Config.Net.Ssl.Mode == "disabled" {
+		noSslData := &MongoYamlNoSslData{}
+		err := yaml.Unmarshal(yamlData, noSslData)
+		if err != nil {
+			log.Fatalf("nossl error: %v", err)
+		}
+		yamlData, err = yaml.Marshal(noSslData)
+		if err != nil {
+			log.Printf("Error marshalling data for yaml (nossl): %v", err)
+		}
+	}
+	return yamlData
+}
+
 func (data *MongoData) Save() {
 	var test_output_folder = os.Getenv("TEST_OUTPUT_FOLDER")
 	var target_output_file = data.SourceConfigFilePath
@@ -189,6 +227,8 @@ func (data *MongoData) Save() {
 		log.Printf("Error marshalling data for yaml: %v", err)
 		return
 	}
+	yamlData = data.NoSslConversion(yamlData)
+
 	log.Printf("Writing mongodb config to %s:  \n\n%s\n", target_output_file, string(yamlData))
 	yamlDataList := strings.Split(string(yamlData), "\n")
 	plugins.WriteLinesToFile(target_output_file, yamlDataList)
