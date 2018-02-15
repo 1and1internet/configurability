@@ -57,7 +57,7 @@ type MongoStorageJournalConfig struct {
 }
 
 type MongoStorageWiredTigerConfig struct {
-	EngineConfig MongoStorageWiredTigerEngingConfig `yaml:"EngineConfig"`
+	EngineConfig MongoStorageWiredTigerEngingConfig `yaml:"engineConfig"`
 }
 
 type MongoStorageWiredTigerEngingConfig struct {
