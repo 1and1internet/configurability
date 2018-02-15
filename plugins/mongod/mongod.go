@@ -12,6 +12,7 @@ import (
 import (
 	"os"
 	"path"
+	"strconv"
 	"strings"
 )
 
@@ -20,42 +21,95 @@ type Customisor interface {
 }
 
 type MongoSystemLogConfig struct {
-	Destination string `yaml:"destination"`
-	LogAppend   bool   `yaml:"logAppend"`
-	Path        string `yaml:"path"`
+	Destination        string                        `yaml:"destination"`
+	LogAppend          bool                          `yaml:"logAppend"`
+	Path               string                        `yaml:"path"`
+	Verbosity          int                           `yaml:"verbosity"`
+	Quiet              bool                          `yaml:"quiet"`
+	TraceAllExceptions bool                          `yaml:"traceAllExceptions"`
+	SyslogFacility     string                        `yaml:"syslogFacility"`
+	LogRotate          string                        `yaml:"logRotate"`
+	TimeStampFormat    string                        `yaml:"timeStampFormat"`
+	Component          MongoSystemLogComponentConfig `yaml:"component"`
+}
+
+type MongoSystemLogComponentConfig struct {
+	AccessControl MongoSystemLogComponentVerbosityConfig `yaml:"accessControl"`
+	Command       MongoSystemLogComponentVerbosityConfig `yaml:"command"`
+	// Replication not defined because we wont need it (yet)
+	// Storage not defined because we wont need it (yet)
+	// Write not defined because we wont need it (yet)
+}
+
+type MongoSystemLogComponentVerbosityConfig struct {
+	Verbosity int `yaml:"verbosity"`
+}
+
+type MongoStorageConfig struct {
+	DbPath          string                       `yaml:"dbPath"`
+	Journal         MongoStorageJournalConfig    `yaml:"journal"`
+	IndexBuildRetry bool                         `yaml:"indexBuildRetry"`
+	WiredTiger      MongoStorageWiredTigerConfig `yaml:"wiredTiger"`
 }
 
 type MongoStorageJournalConfig struct {
 	Enabled bool `yaml:"enabled"`
 }
 
-type MongoStorageConfig struct {
-	DbPath  string                    `yaml:"dbPath"`
-	Journal MongoStorageJournalConfig `yaml:"journal"`
+type MongoStorageWiredTigerConfig struct {
+	EngineConfig MongoStorageWiredTigerEngingConfig `yaml:"EngineConfig"`
+}
+
+type MongoStorageWiredTigerEngingConfig struct {
+	CacheSizeGB float32 `yaml:"cacheSizeGB"`
 }
 
 type MongoNetConfig struct {
-	Port   int    `yaml:"port"`
-	BindIp string `yaml:"bindIp"`
+	Port            int                 `yaml:"port"`
+	BindIpAll       bool                `yaml:"bindIpAll"`
+	WireObjectCheck bool                `yaml:"wireObjectCheck"`
+	Ipv6            bool                `yaml:"ipv6"`
+	Ssl             MongoNetSslConfig   `yaml:"ssl"`
+	Compression     MongoNetCompression `yaml:"compression"`
+	ServiceExecutor string              `yaml:"serviceExecutor"`
+}
+
+type MongoNetSslConfig struct {
+	Mode                                string `yaml:"mode"`
+	PEMKeyFile                          string `yaml:"PEMKeyFile"`
+	PEMKeyPassword                      string `yaml:"PEMKeyPassword"`
+	ClusterFile                         string `yaml:"clusterFile"`
+	ClusterPassword                     string `yaml:"clusterPassword"`
+	CAFile                              string `yaml:"CAFile"`
+	CRLFile                             string `yaml:"CRLFile"`
+	AllowConnectionsWithoutCertificates bool   `yaml:"allowConnectionsWithoutCertificates"`
+	AllowInvalidCertificates            bool   `yaml:"allowInvalidCertificates"`
+	AllowInvalidHostnames               bool   `yaml:"allowInvalidHostnames"`
+	DisabledProtocols                   string `yaml:"disabledProtocols"`
+	FIPSMode                            bool   `yaml:"FIPSMode"`
+}
+
+type MongoNetCompression struct {
+	Compressors string `yaml:"compressors"`
 }
 
 type MongoProcessManagementConfig struct {
 	TimeZoneInfo string `yaml:"timeZoneInfo"`
+	Fork         bool   `yaml:"fork"`
+	PidFilePath  string `yaml:"pidFilePath"`
 }
 
 type MongoSecurityConfig struct {
-}
-
-type MongoOperationProfilingConfig struct {
+	Authorization     string `yaml:"authorization"`
+	JavascriptEnabled string `yaml:"javascriptEnabled"`
 }
 
 type MongoYamlData struct {
-	Storage            MongoStorageConfig            `yaml:"storage"`
-	SystemLog          MongoSystemLogConfig          `yaml:"systemLog"`
-	Net                MongoNetConfig                `yaml:"net"`
-	ProcessManagement  MongoProcessManagementConfig  `yaml:"processManagement"`
-	Security           MongoSecurityConfig           `yaml:"security"`
-	OperationProfiling MongoOperationProfilingConfig `yaml:"operationProfiling"`
+	Storage MongoStorageConfig `yaml:"storage"`
+	// SystemLog          MongoSystemLogConfig          `yaml:"systemLog"`
+	Net MongoNetConfig `yaml:"net"`
+	// ProcessManagement  MongoProcessManagementConfig  `yaml:"processManagement"`
+	Security MongoSecurityConfig `yaml:"security"`
 }
 
 type MongoData struct {
@@ -97,6 +151,32 @@ func (mongoData *MongoData) LoadConfig(section ini.Section) bool {
 	return true
 }
 
+func (mongoData *MongoData) ApplyLocalStorageWiredTigerConfig() {
+	mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = 0.25
+	cgroup_mem_limit_fname := "/sys/fs/cgroup/memory/memory.limit_in_bytes"
+	_, err := os.Stat(cgroup_mem_limit_fname)
+	if err == nil {
+		cgroup_mem_limit, errRead := ioutil.ReadFile(cgroup_mem_limit_fname)
+		if errRead == nil {
+			cgroup_mem_limit_int, errconv := strconv.ParseUint(string(cgroup_mem_limit), 10, 64)
+			if errconv == nil {
+				new_limit := float32((cgroup_mem_limit_int / 1024 / 1024 / 2) - 1024)
+				if new_limit > mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB {
+					mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = new_limit
+				}
+			}
+		}
+	}
+}
+
+func (mongoData *MongoData) ApplyLocalStorageConfig() {
+	mongoData.ApplyLocalStorageWiredTigerConfig()
+}
+
+func (mongoData *MongoData) ApplyLocalEnvironmentConfig() {
+	mongoData.ApplyLocalStorageConfig()
+}
+
 func (data *MongoData) Save() {
 	var test_output_folder = os.Getenv("TEST_OUTPUT_FOLDER")
 	var target_output_file = data.SourceConfigFilePath
@@ -117,6 +197,7 @@ func (data *MongoData) Save() {
 func (data *MongoData) ApplyCustomisations(content []byte) {
 	enabled := data.LoadConfig(data.ConfMongodJsonSection)
 	if enabled {
+		data.ApplyLocalEnvironmentConfig()
 		data.LoadCustomConfig(content)
 		data.Save()
 	}
