@@ -91,6 +91,10 @@ func (allInfo *CustomisationInfo) GetMaxMemory() {
 	allInfo.MaxMemoryBytes = 0
 	cgroup_mem_limit_int, err := plugins.GetMaxMemoryOfContainer()
 	if err == nil {
+		if cgroup_mem_limit_int > 8589934592 {
+			log.Printf("WARNING: Forcing 8G memory limit")
+			cgroup_mem_limit_int = 8589934592
+		}
 		allInfo.MaxMemoryBytes = cgroup_mem_limit_int
 	} else {
 		log.Printf("ERROR getting container max memory %v", err)
