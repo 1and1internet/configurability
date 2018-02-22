@@ -12,7 +12,6 @@ import (
 import (
 	"os"
 	"path"
-	"strconv"
 	"strings"
 )
 
@@ -173,18 +172,11 @@ func (mongoData *MongoData) LoadConfig(section ini.Section) bool {
 
 func (mongoData *MongoData) ApplyLocalStorageWiredTigerConfig() {
 	mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = 0.25
-	cgroup_mem_limit_fname := "/sys/fs/cgroup/memory/memory.limit_in_bytes"
-	_, err := os.Stat(cgroup_mem_limit_fname)
+	cgroup_mem_limit_int, err := plugins.GetMaxMemoryOfContainer()
 	if err == nil {
-		cgroup_mem_limit, errRead := ioutil.ReadFile(cgroup_mem_limit_fname)
-		if errRead == nil {
-			cgroup_mem_limit_int, errconv := strconv.ParseUint(string(cgroup_mem_limit), 10, 64)
-			if errconv == nil {
-				new_limit := float32((cgroup_mem_limit_int / 1024 / 1024 / 2) - 1024)
-				if new_limit > mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB {
-					mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = new_limit
-				}
-			}
+		new_limit := float32((cgroup_mem_limit_int / 1024 / 1024 / 2) - 1024)
+		if new_limit > mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB {
+			mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = new_limit
 		}
 	}
 }

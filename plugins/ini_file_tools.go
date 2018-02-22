@@ -3,6 +3,7 @@ package plugins
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -148,4 +149,21 @@ func WriteLinesToFile(full_file_path string, lines_to_write []string) {
 		fh.WriteString(fmt.Sprintf("%s\n", line))
 	}
 	fh.Close()
+}
+
+func GetMaxMemoryOfContainer() (uint64, error) {
+	cgroup_mem_limit_fname := "/sys/fs/cgroup/memory/memory.limit_in_bytes"
+	_, err := os.Stat(cgroup_mem_limit_fname)
+	if err == nil {
+		cgroup_mem_limit, errRead := ioutil.ReadFile(cgroup_mem_limit_fname)
+		if errRead == nil {
+			cgroup_mem_limit_str := strings.Trim(string(cgroup_mem_limit), "\n")
+			cgroup_mem_limit_int, errconv := strconv.ParseUint(cgroup_mem_limit_str, 10, 64)
+			return cgroup_mem_limit_int, errconv
+		} else {
+			return 0, errRead
+		}
+	} else {
+		return 0, err
+	}
 }

@@ -1,0 +1,5 @@
+export CONFIGURABILITY_DIR=testfiles/customisations
+export CONF_PLUGIN_FOLDER=bin/plugins
+export TEST_OUTPUT_FOLDER=testfiles/output
+export TEST_INPUT_FOLDER=testfiles/source_config
+export CONFIGURABILITY_INTERNAL=testfiles/etc_configuration

@@ -1,4 +1,4 @@
-PLUGINS = apache2 basic mysql nginx php mongod
+PLUGINS = apache2 basic mysql nginx php mongod java8
 MAIN_FOLDER = bin
 PLUGINS_FOLDER = bin/plugins
 
