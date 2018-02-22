@@ -76,7 +76,7 @@ func (allInfo *CustomisationInfo) ApplyCustomisations() {
 	allInfo.OptionParallelRefProcEnabled(&options)
 
 	line := strings.Join(options, " ")
-	lines := []string{line}
+	lines := []string{fmt.Sprintf("export CUSTOM_JAVA_OPTS=\"%s\"", line)}
 	plugins.WriteLinesToFile(getOutputFileName(), lines)
 }
 
