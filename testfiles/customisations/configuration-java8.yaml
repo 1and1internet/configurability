@@ -7,7 +7,7 @@
         InitialHeapSize_Percent: 0
         MaxGCPauseMillis: 0
         MaxHeapSize_Percent: 100
-        MaxHeapFreeRatio: 70
+        MaxHeapFreeRatio: 0
         MaxMetaspaceSize: 0
         MaxNewSize_Percent: 50
         MaxTenuringThreshold: 0

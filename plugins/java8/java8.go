@@ -13,7 +13,7 @@ import (
 )
 import "fmt"
 
-const OutputFileName = "/etc/custom_java_opts"
+const OutputFileName = "/etc/configurability/custom/java_opts"
 
 type Customisor interface {
 	ApplyCustomisations()
