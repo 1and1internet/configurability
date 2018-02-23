@@ -57,10 +57,11 @@ func UnpackEtcIni(section ini.Section, allowBooleanKeys bool) (bool, *ini.File, 
 	}
 }
 
-func ReadEtcConfiguration(iniFileName string) *ini.Section {
+func ReadEtcConfiguration(iniFileName string) (*ini.Section, error) {
 	cfg, err := ini.Load(iniFileName)
 	if err != nil {
-		log.Fatalf("Ini Loader error: [%s] [%v]", iniFileName, err)
+		log.Printf("Ini Loader error: [%s] [%v]", iniFileName, err)
+		return nil, err
 	}
 
 	for _, sectionName := range cfg.SectionStrings() {
@@ -68,12 +69,12 @@ func ReadEtcConfiguration(iniFileName string) *ini.Section {
 			section, err := cfg.GetSection(sectionName)
 			if err == nil {
 				log.Printf("Loading %s config\n", sectionName)
-				return section
+				return section, nil
 			}
 		}
 	}
 
-	return nil
+	return nil, nil
 }
 
 func SaveIniFile(iniFile ini.File, iniFilePath string, testFileName string) {

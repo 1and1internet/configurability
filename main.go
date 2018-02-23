@@ -1,18 +1,19 @@
 package main
 
 import (
-	"path/filepath"
-	"path"
+	"io/ioutil"
 	"log"
-	"plugin"
 	"os"
+	"path"
+	"path/filepath"
+	"plugin"
+
 	"github.com/1and1internet/configurability/file_helpers"
 	"github.com/1and1internet/configurability/plugins"
 	"github.com/go-ini/ini"
-	"io/ioutil"
 )
 
-func getPluginFolder() (string) {
+func getPluginFolder() string {
 	pluginFolder, ok := os.LookupEnv("CONF_PLUGIN_FOLDER")
 	if ok {
 		return pluginFolder
@@ -20,10 +21,10 @@ func getPluginFolder() (string) {
 	return "/opt/configurability/goplugins"
 }
 
-func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*ini.Section) (bool) {
+func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*ini.Section) bool {
 	var customisationFilePathMap map[string]string = file_helpers.MapCustomisationFolder()
 	customised := false
-	for _, section := range etcConfigSections{
+	for _, section := range etcConfigSections {
 		var configuration_file_name = section.Key("configuration_file_name")
 		customisationFilePath, ok := customisationFilePathMap[configuration_file_name.String()]
 		if ok {
@@ -43,11 +44,11 @@ func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*
 	return customised
 }
 
-func readAllEtcConfigSections() ([]*ini.Section) {
+func readAllEtcConfigSections() []*ini.Section {
 	var sections []*ini.Section
 	for _, etcConfigrationFilePath := range file_helpers.ListEtcConfigFolder() {
-		var section= plugins.ReadEtcConfiguration(etcConfigrationFilePath)
-		if section != nil {
+		section, err := plugins.ReadEtcConfiguration(etcConfigrationFilePath)
+		if err == nil && section != nil {
 			sections = append(sections, section)
 		}
 	}
@@ -56,9 +57,9 @@ func readAllEtcConfigSections() ([]*ini.Section) {
 
 func main() {
 	loggingFilename := "/dev/stdout"
-	f, err := os.OpenFile(loggingFilename, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	f, err := os.OpenFile(loggingFilename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-			log.Fatalf("error opening file: %v", err)
+		log.Fatalf("error opening file: %v", err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
