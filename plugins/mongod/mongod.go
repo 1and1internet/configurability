@@ -114,7 +114,7 @@ type MongoProcessManagementConfig struct {
 
 type MongoSecurityConfig struct {
 	Authorization     string `yaml:"authorization"`
-	JavascriptEnabled string `yaml:"javascriptEnabled"`
+	JavascriptEnabled bool   `yaml:"javascriptEnabled"`
 }
 
 type MongoYamlData struct {

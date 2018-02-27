@@ -1,4 +1,4 @@
 {"net": {"ssl": {"mode":"enabled"}, "compression": {"compressors": "snappy zlib"}},
 "processManagement": {"timeZoneInfo": "/usr/share/ozoneinfo"},
-"setParameter": {"enableLocalhostAuthBypass": true}
+"setParameter": {"enableLocalhostAuthBypass": true}, "security": {"javascriptEnabled": true}
 }
