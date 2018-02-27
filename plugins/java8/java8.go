@@ -7,11 +7,13 @@ import (
 	"path"
 	"strings"
 
+	"fmt"
+	"math"
+
 	"github.com/1and1internet/configurability/plugins"
 	"github.com/go-ini/ini"
 	yaml "gopkg.in/yaml.v2"
 )
-import "fmt"
 
 const OutputFileName = "/etc/configurability/custom/java_opts"
 
@@ -165,13 +167,14 @@ func (allInfo *CustomisationInfo) GetJavaMemorySizeOptionString(
 	}
 	if percent > 0 && percent <= 100 {
 		size := uint64(float64(allInfo.MaxMemoryBytes) * (float64(percent) / 100.0))
-		size_str := GetTidySuffixedMemoryStringInMultiplesOf1024(size)
+		size_str := GetMemoryInMultiplesOf1024AsTidySuffixedString(size)
 		option := fmt.Sprintf(optstring, size_str)
 		*options = append(*options, option)
 	}
 }
 
-func GetTidySuffixedMemoryStringInMultiplesOf1024(size uint64) string {
+func GetMemoryInMultiplesOf1024AsTidySuffixedString(size uint64) string {
+	size = GetRoundedTo1024(size)
 	size_str := fmt.Sprintf("%v", size)
 	for _, suffix := range []string{"K", "M", "G"} {
 		if size >= 1048576 {
@@ -182,6 +185,16 @@ func GetTidySuffixedMemoryStringInMultiplesOf1024(size uint64) string {
 		}
 	}
 	return size_str
+}
+
+func GetRoundedTo1024(size uint64) uint64 {
+	remainder := math.Mod(float64(size), 1024.0)
+	if remainder > 512.0 {
+		return size + uint64(1024.0-remainder)
+	} else if remainder > 0 {
+		return size - uint64(remainder)
+	}
+	return size
 }
 
 func (allInfo *CustomisationInfo) OptionInitialHeapSize_Percent(options *[]string) {
