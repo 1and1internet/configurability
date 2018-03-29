@@ -14,6 +14,7 @@ import (
 	"github.com/go-ini/ini"
 	yaml "gopkg.in/yaml.v2"
 )
+import "strconv"
 
 const OutputFileName = "/etc/configurability/custom/java_opts"
 
@@ -91,12 +92,9 @@ func OurConfigFileName(configurationFileName string) bool {
 
 func (allInfo *CustomisationInfo) GetMaxMemory() {
 	allInfo.MaxMemoryBytes = 0
-	cgroup_mem_limit_int, err := plugins.GetMaxMemoryOfContainer()
+	cgroup_mem_limit_str := plugins.GetMaxMemoryOfContainerAsString("8589934592")
+	cgroup_mem_limit_int, err := strconv.Atoi(cgroup_mem_limit_str)
 	if err == nil {
-		if cgroup_mem_limit_int > 8589934592 {
-			log.Printf("WARNING: Forcing 8G memory limit")
-			cgroup_mem_limit_int = 8589934592
-		}
 		allInfo.MaxMemoryBytes = cgroup_mem_limit_int
 	} else {
 		log.Printf("ERROR getting container max memory %v", err)
@@ -108,7 +106,7 @@ type CustomisationInfo struct {
 	JavaSwitches         *Java8Data
 	ConfJavaSection      ini.Section
 	SourceConfigFilePath string
-	MaxMemoryBytes       uint64
+	MaxMemoryBytes       int
 }
 
 type Java8Data struct {
