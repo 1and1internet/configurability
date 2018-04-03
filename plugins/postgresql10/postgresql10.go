@@ -190,7 +190,7 @@ func (allInfo *CustomisationInfo) ApplyCustomisations() {
 	allInfo.LogDuration()
 	allInfo.LogErrorVerbosity()
 	allInfo.LogHostname()
-	allInfo.LogLinePrefix()
+	//allInfo.LogLinePrefix()
 	allInfo.LogLockWaits()
 	allInfo.LogStatement()
 	allInfo.LogTempFiles()
@@ -777,11 +777,11 @@ func (allInfo *CustomisationInfo) LogHostname() {
 	)
 }
 
-func (allInfo *CustomisationInfo) LogLinePrefix() {
-	allInfo.ParsedConfLineMap["log_line_prefix"].SetStrVal(
-		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogLinePrefix, "%m [%p] ",
-	)
-}
+//func (allInfo *CustomisationInfo) LogLinePrefix() {
+//	allInfo.ParsedConfLineMap["log_line_prefix"].SetStrVal(
+//		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogLinePrefix, "%m [%p] ",
+//	)
+//}
 
 func (allInfo *CustomisationInfo) LogLockWaits() {
 	allInfo.ParsedConfLineMap["log_lock_waits"].SetStrVal(
@@ -982,69 +982,69 @@ type RequestedConfig struct {
 }
 
 type PostgreSqlConfSettings struct {
-	MaxConnections                  int    `yaml:"max_connections"`
-	SuperuserReservedConnections    int    `yaml:"superuser_reserved_connections"`
-	SharedBuffers                   string `yaml:"shared_buffers"`
-	HugePages                       string `yaml:"huge_pages"`
-	MaxPreparedTransactions         int    `yaml:"max_prepared_transactions"`
-	WorkMem                         string `yaml:"work_mem"`
-	MaintenanceWorkMem              string `yaml:"maintenance_work_mem"`
-	ReplacementSortTuples           int    `yaml:"replacement_sort_tuples"`
-	MaxStackDepth                   string `yaml:"max_stack_depth"`
-	VacuumCostDelay                 string `yaml:"vacuum_cost_delay"`
-	VacuumCostPageHit               int    `yaml:"vacuum_cost_page_hit"`
-	VacuumCostPageMiss              int    `yaml:"vacuum_cost_page_miss"`
-	VacuumCostPageDirty             int    `yaml:"vacuum_cost_page_dirty"`
-	VacuumCostLimit                 int    `yaml:"vacuum_cost_limit"`
-	BgwriterDelay                   string `yaml:"bgwriter_delay"`
-	BgwriterLruMaxpages             int    `yaml:"bgwriter_lru_maxpages"`
-	BgwriterLruMultiplier           string `yaml:"bgwriter_lru_multiplier"`
-	WalLevel                        string `yaml:"wal_level"`
-	SynchronousCommit               string `yaml:"synchronous_commit"`
-	WalSyncMethod                   string `yaml:"wal_sync_method"`
-	WalLogHints                     string `yaml:"wal_log_hints"`
-	WalCompression                  string `yaml:"wal_compression"`
-	WalWriterDelay                  string `yaml:"wal_writer_delay"`
-	WalWriterFlushAfter             string `yaml:"wal_writer_flush_after"`
-	CommitDelay                     int    `yaml:"commit_delay"`
-	CommitSiblings                  int    `yaml:"commit_siblings"`
-	CheckpointTimeout               string `yaml:"checkpoint_timeout"`
-	CheckpointCompletionTarget      string `yaml:"checkpoint_completion_target"`
-	CheckpointFlushAfter            string `yaml:"checkpoint_flush_after"`
-	CheckpointWarning               string `yaml:"checkpoint_warning"`
-	MaxWalSize                      string `yaml:"max_wal_size"`
-	MinWalSize                      string `yaml:"min_wal_size"`
-	ArchiveMode                     string `yaml:"archive_mode"`
-	ArchiveCommand                  string `yaml:"archive_command"`
-	ArchiveTimeout                  int    `yaml:"archive_timeout"`
-	EnableBitmapscan                string `yaml:"enable_bitmapscan"`
-	EnableHashagg                   string `yaml:"enable_hashagg"`
-	EnableHashjoin                  string `yaml:"enable_hashjoin"`
-	EnableIndexscan                 string `yaml:"enable_indexscan"`
-	EnableIndexonlyscan             string `yaml:"enable_indexonlyscan"`
-	EnableMaterial                  string `yaml:"enable_material"`
-	EnableMergejoin                 string `yaml:"enable_mergejoin"`
-	EnableNestloop                  string `yaml:"enable_nestloop"`
-	EnableSeqscan                   string `yaml:"enable_seqscan"`
-	EnableSort                      string `yaml:"enable_sort"`
-	EnableTidscan                   string `yaml:"enable_tidscan"`
-	LogDestination                  string `yaml:"log_destination"`
-	LoggingCollector                string `yaml:"logging_collector"`
-	ClientMinMessages               string `yaml:"client_min_messages"`
-	LogMinMessages                  string `yaml:"log_min_messages"`
-	LogMinErrorStatement            string `yaml:"log_min_error_statement"`
-	LogMinDurationStatement         int    `yaml:"log_min_duration_statement"`
-	DebugPrintParse                 string `yaml:"debug_print_parse"`
-	DebugPrintRewritten             string `yaml:"debug_print_rewritten"`
-	DebugPrintPlan                  string `yaml:"debug_print_plan"`
-	DebugPrettyPrint                string `yaml:"debug_pretty_print"`
-	LogCheckpoints                  string `yaml:"log_checkpoints"`
-	LogConnections                  string `yaml:"log_connections"`
-	LogDisconnections               string `yaml:"log_disconnections"`
-	LogDuration                     string `yaml:"log_duration"`
-	LogErrorVerbosity               string `yaml:"log_error_verbosity"`
-	LogHostname                     string `yaml:"log_hostname"`
-	LogLinePrefix                   string `yaml:"log_line_prefix"`
+	MaxConnections               int    `yaml:"max_connections"`
+	SuperuserReservedConnections int    `yaml:"superuser_reserved_connections"`
+	SharedBuffers                string `yaml:"shared_buffers"`
+	HugePages                    string `yaml:"huge_pages"`
+	MaxPreparedTransactions      int    `yaml:"max_prepared_transactions"`
+	WorkMem                      string `yaml:"work_mem"`
+	MaintenanceWorkMem           string `yaml:"maintenance_work_mem"`
+	ReplacementSortTuples        int    `yaml:"replacement_sort_tuples"`
+	MaxStackDepth                string `yaml:"max_stack_depth"`
+	VacuumCostDelay              string `yaml:"vacuum_cost_delay"`
+	VacuumCostPageHit            int    `yaml:"vacuum_cost_page_hit"`
+	VacuumCostPageMiss           int    `yaml:"vacuum_cost_page_miss"`
+	VacuumCostPageDirty          int    `yaml:"vacuum_cost_page_dirty"`
+	VacuumCostLimit              int    `yaml:"vacuum_cost_limit"`
+	BgwriterDelay                string `yaml:"bgwriter_delay"`
+	BgwriterLruMaxpages          int    `yaml:"bgwriter_lru_maxpages"`
+	BgwriterLruMultiplier        string `yaml:"bgwriter_lru_multiplier"`
+	WalLevel                     string `yaml:"wal_level"`
+	SynchronousCommit            string `yaml:"synchronous_commit"`
+	WalSyncMethod                string `yaml:"wal_sync_method"`
+	WalLogHints                  string `yaml:"wal_log_hints"`
+	WalCompression               string `yaml:"wal_compression"`
+	WalWriterDelay               string `yaml:"wal_writer_delay"`
+	WalWriterFlushAfter          string `yaml:"wal_writer_flush_after"`
+	CommitDelay                  int    `yaml:"commit_delay"`
+	CommitSiblings               int    `yaml:"commit_siblings"`
+	CheckpointTimeout            string `yaml:"checkpoint_timeout"`
+	CheckpointCompletionTarget   string `yaml:"checkpoint_completion_target"`
+	CheckpointFlushAfter         string `yaml:"checkpoint_flush_after"`
+	CheckpointWarning            string `yaml:"checkpoint_warning"`
+	MaxWalSize                   string `yaml:"max_wal_size"`
+	MinWalSize                   string `yaml:"min_wal_size"`
+	ArchiveMode                  string `yaml:"archive_mode"`
+	ArchiveCommand               string `yaml:"archive_command"`
+	ArchiveTimeout               int    `yaml:"archive_timeout"`
+	EnableBitmapscan             string `yaml:"enable_bitmapscan"`
+	EnableHashagg                string `yaml:"enable_hashagg"`
+	EnableHashjoin               string `yaml:"enable_hashjoin"`
+	EnableIndexscan              string `yaml:"enable_indexscan"`
+	EnableIndexonlyscan          string `yaml:"enable_indexonlyscan"`
+	EnableMaterial               string `yaml:"enable_material"`
+	EnableMergejoin              string `yaml:"enable_mergejoin"`
+	EnableNestloop               string `yaml:"enable_nestloop"`
+	EnableSeqscan                string `yaml:"enable_seqscan"`
+	EnableSort                   string `yaml:"enable_sort"`
+	EnableTidscan                string `yaml:"enable_tidscan"`
+	LogDestination               string `yaml:"log_destination"`
+	LoggingCollector             string `yaml:"logging_collector"`
+	ClientMinMessages            string `yaml:"client_min_messages"`
+	LogMinMessages               string `yaml:"log_min_messages"`
+	LogMinErrorStatement         string `yaml:"log_min_error_statement"`
+	LogMinDurationStatement      int    `yaml:"log_min_duration_statement"`
+	DebugPrintParse              string `yaml:"debug_print_parse"`
+	DebugPrintRewritten          string `yaml:"debug_print_rewritten"`
+	DebugPrintPlan               string `yaml:"debug_print_plan"`
+	DebugPrettyPrint             string `yaml:"debug_pretty_print"`
+	LogCheckpoints               string `yaml:"log_checkpoints"`
+	LogConnections               string `yaml:"log_connections"`
+	LogDisconnections            string `yaml:"log_disconnections"`
+	LogDuration                  string `yaml:"log_duration"`
+	LogErrorVerbosity            string `yaml:"log_error_verbosity"`
+	LogHostname                  string `yaml:"log_hostname"`
+	//LogLinePrefix                   string `yaml:"log_line_prefix"`
 	LogLockWaits                    string `yaml:"log_lock_waits"`
 	LogStatement                    string `yaml:"log_statement"`
 	LogTempFiles                    int    `yaml:"log_temp_files"`
