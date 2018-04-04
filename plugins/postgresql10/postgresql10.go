@@ -469,7 +469,7 @@ func (allInfo *CustomisationInfo) BgwriterLruMultiplier() {
 
 func (allInfo *CustomisationInfo) WalLevel() {
 	allInfo.ParsedConfLineMap["wal_level"].SetStrVal(
-		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalLevel, "minimal",
+		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalLevel, "replica",
 	)
 }
 
