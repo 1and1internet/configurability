@@ -39,6 +39,7 @@ type MysqlJsonData struct {
 		QueryCacheLimit	int64	`json:"query_cache_limit"`
 		QueryCacheSize int64	`json:"query_cache_size"`
 		QueryCacheType string	`json:"query_cache_type"`
+		InnoDBBufferPoolSize int64	`json:"innodb_buffer_pool_size"`
 	}
 }
 
@@ -93,6 +94,8 @@ func (mysql *MysqlParserData) ApplyCustomisations() {
 			plugins.UpdateInt64Key("MYSQL", mysqld, "query_cache_size", mysql.JsonData.Mysqld.QueryCacheSize)
 
 			plugins.UpdateStringKey("MYSQL", mysqld, "query_cache_type", mysql.JsonData.Mysqld.QueryCacheType)
+
+			plugins.UpdateInt64Key("MYSQL", mysqld, "innodb_buffer_pool_size", mysql.JsonData.Mysqld.InnoDBBufferPoolSize)
 
 			plugins.SaveIniFile(*iniFile, iniFilePath, "mysql.ini")
 		}
