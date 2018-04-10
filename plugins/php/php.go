@@ -33,6 +33,9 @@ type PhpJsonData struct {
 		TrackErrors           bool   `json:"track_errors"`
 		ErrorReporting        string `json:"error_reporting"`
 	}
+	OpCache struct {
+		OpCacheMemory         string `json:"opcache.memory_consumption"`
+	}
 }
 
 type PhpParserData struct {
@@ -79,9 +82,14 @@ func (php *PhpParserData) ApplyCustomisations() {
 			plugins.UpdateBoolKey("PHP", php_section, "track_errors", php.JsonData.PHP.TrackErrors)
 
 			plugins.UpdateStringKey("PHP", php_section, "error_reporting", php.JsonData.PHP.ErrorReporting)
+		}
+		
+		opcache_section, err := iniFile.GetSection("opcache")
+		if err == nil {
+			plugins.UpdateStringKey("PHP", opcache_section, "opcache.memory_consumption", php.JsonData.OpCache.OpCacheMemory)
+		}
 
 			plugins.SaveIniFile(*iniFile, iniFilePath, "php.ini")
-		}
 	}
 }
 

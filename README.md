@@ -113,3 +113,5 @@ in the **testfiles/source_config** folder.
 Finally, just run the configurator and compare the contents of
 **/tmp/output** to the original source files and the customisations.
 
+### Vending
+Vending is done using dep for go `https://golang.github.io/dep/`
