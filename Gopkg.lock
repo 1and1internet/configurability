@@ -2,15 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/1and1internet/configurability"
-  packages = [
-    "file_helpers",
-    "plugins"
-  ]
-  revision = "bb7cb426746bbe07a81c6d03e29348c45d80e729"
-
-[[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
   revision = "5e9692864e22d02ac79e2fa499cffb00520b4fea"
@@ -25,6 +16,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "92848fa972f32aa0b9b9640ff62b6d32f65a5cc8f2aa0f550b11a6408c8d1a26"
+  inputs-digest = "019d0426c0a381284a658ee8c8ede3c9fa36a67f44d76e4d4c353ba86de999c1"
   solver-name = "gps-cdcl"
   solver-version = 1
