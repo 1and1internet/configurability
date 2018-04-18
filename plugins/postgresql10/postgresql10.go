@@ -300,20 +300,20 @@ func (confline *ConfigLine) SetTimeVal(value, defaultValue, min, max string) {
 	}
 }
 
-func (confline *ConfigLine) SetMemVal(value, defaultValue, min, max string, systemMax plugins.MemValue) {
+func (confline *ConfigLine) SetMemVal(value, deflt, min, max string, systemMax plugins.MemValue) {
 	memValue := plugins.GetMemoryValue(value)
 	minValue := plugins.GetMemoryValue(min)
 	maxValue := plugins.GetMemoryValue(max)
+	defaultValue := plugins.GetMemoryValue(deflt)
 
 	if memValue.Error != nil || minValue.Error != nil || maxValue.Error != nil {
 		return
 	}
 
-	if memValue.LessThan(minValue) || maxValue.LessThan(memValue) {
-		value = defaultValue
-	}
-
-	if value != confline.Value {
+	if memValue.LessThan(minValue) || maxValue.LessThan(memValue) || systemMax.LessThan(memValue) {
+		confline.Value = defaultValue.CorrectOptimisedStrValue
+		confline.UseOrig = false
+	} else if value != confline.Value {
 		confline.Value = memValue.CorrectOptimisedStrValue
 		confline.UseOrig = false
 	}
