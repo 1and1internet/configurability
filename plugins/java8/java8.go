@@ -14,7 +14,6 @@ import (
 	"github.com/go-ini/ini"
 	yaml "gopkg.in/yaml.v2"
 )
-import "strconv"
 
 const OutputFileName = "/etc/configurability/custom/java_opts"
 
@@ -91,14 +90,14 @@ func OurConfigFileName(configurationFileName string) bool {
 }
 
 func (allInfo *CustomisationInfo) GetMaxMemory() {
-	allInfo.MaxMemoryBytes = 0
-	cgroup_mem_limit_str := plugins.GetMaxMemoryOfContainerAsString("8589934592")
-	cgroup_mem_limit_int, err := strconv.Atoi(cgroup_mem_limit_str)
-	if err == nil {
-		allInfo.MaxMemoryBytes = cgroup_mem_limit_int
+	imposedMaxMemValue := plugins.GetMemoryValue("8589934592")
+	cgroup_mem_limit := plugins.GetMemoryValue(
+		plugins.GetMaxMemoryOfContainerAsString(),
+	)
+	if imposedMaxMemValue.LessThan(cgroup_mem_limit) {
+		allInfo.MaxMemoryBytes = imposedMaxMemValue.ActualIntMemsize
 	} else {
-		log.Printf("ERROR getting container max memory %v", err)
-		log.Print("WARNING: All memory options will be defaults")
+		allInfo.MaxMemoryBytes = cgroup_mem_limit.ActualIntMemsize
 	}
 }
 
