@@ -22,3 +22,11 @@ func TestNiceMemoryString(t *testing.T) {
 		t.Fatal(fmt.Sprintf("%v != 2048M", size))
 	}
 }
+
+func TestMaxMemory(t *testing.T) {
+	allInfo := CustomisationInfo{}
+	allInfo.GetMaxMemory()
+	if allInfo.MaxMemoryBytes != 8589934592 {
+		t.Fatal(fmt.Sprintf("%v != 8589934592", allInfo.MaxMemoryBytes))
+	}
+}

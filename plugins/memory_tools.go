@@ -12,14 +12,14 @@ import (
 )
 
 type MemValue struct {
-	Original        string
-	NumberAsInt     int
-	NumberAsString  string
-	Units           string
-	IntMemsize      int
-	Converted       bool
-	CorrectStrValue string
-	Error           error
+	Original                 string
+	OptNumberPartAsInt       int
+	OrigNumberPartAsString   string
+	Units                    string
+	ActualIntMemsize         int
+	Converted                bool
+	CorrectOptimisedStrValue string
+	Error                    error
 }
 
 func GetMemoryValue(memstr string) *MemValue {
@@ -31,15 +31,15 @@ func GetMemoryValue(memstr string) *MemValue {
 }
 
 func (memval *MemValue) memStrToInt() {
-	memval.IntMemsize = memval.NumberAsInt
+	memval.ActualIntMemsize = memval.OptNumberPartAsInt
 	if memval.Units != "" {
-		memval.IntMemsize = memval.IntMemsize * 1024
+		memval.ActualIntMemsize = memval.ActualIntMemsize * 1024
 		if memval.Units != "kB" {
-			memval.IntMemsize = memval.IntMemsize * 1024
+			memval.ActualIntMemsize = memval.ActualIntMemsize * 1024
 			if memval.Units != "MB" {
-				memval.IntMemsize = memval.IntMemsize * 1024
+				memval.ActualIntMemsize = memval.ActualIntMemsize * 1024
 				if memval.Units != "GB" {
-					memval.IntMemsize = memval.IntMemsize * 1024
+					memval.ActualIntMemsize = memval.ActualIntMemsize * 1024
 				}
 			}
 		}
@@ -47,8 +47,8 @@ func (memval *MemValue) memStrToInt() {
 }
 
 func (memval *MemValue) optimise() {
-	for memval.NumberAsInt >= 1024 && memval.Units != "TB" {
-		memval.NumberAsInt = memval.NumberAsInt / 1024
+	for memval.OptNumberPartAsInt >= 1024 && memval.Units != "TB" {
+		memval.OptNumberPartAsInt = memval.OptNumberPartAsInt / 1024
 		switch memval.Units {
 		case "":
 			memval.Units = "kB"
@@ -73,22 +73,22 @@ func (result *MemValue) MemStrToMemValue() {
 
 	re1 := regexp.MustCompile("[-0-9]+")
 	re2 := regexp.MustCompile("(kB|KB|Kb|kb|MB|mb|Mb|mB|GB|gb|Gb|gB|TB|tb|Tb|tB)")
-	result.NumberAsString = re1.FindString(result.Original)
+	result.OrigNumberPartAsString = re1.FindString(result.Original)
 	result.Units = re2.FindString(result.Original)
-	if result.NumberAsString != "" && fmt.Sprintf("%s%s", result.NumberAsString, result.Units) == result.Original {
+	if result.OrigNumberPartAsString != "" && fmt.Sprintf("%s%s", result.OrigNumberPartAsString, result.Units) == result.Original {
 		result.Units = strings.ToUpper(result.Units)
 		if result.Units == "KB" {
 			result.Units = "kB"
 		}
-		numberAsInt, err := strconv.Atoi(result.NumberAsString)
+		optNumberPartAsInt, err := strconv.Atoi(result.OrigNumberPartAsString)
 		if err != nil {
 			result.Error = errors.New(fmt.Sprintf("Failed to convert memory string (1) %s\n\t%s", result.Original, err))
 		} else {
-			result.NumberAsInt = numberAsInt
+			result.OptNumberPartAsInt = optNumberPartAsInt
 			result.optimise()
 			result.memStrToInt()
 			result.Converted = true
-			result.CorrectStrValue = fmt.Sprintf("%s%s", result.NumberAsString, result.Units)
+			result.CorrectOptimisedStrValue = fmt.Sprintf("%d%s", result.OptNumberPartAsInt, result.Units)
 		}
 	} else {
 		result.Error = errors.New(fmt.Sprintf("Failed to convert memory string (2) [%s]", result.Original))
@@ -98,17 +98,13 @@ func (result *MemValue) MemStrToMemValue() {
 	}
 }
 
-func GetMaxMemoryOfContainerAsString(imposedLimit string) string {
+func GetMaxMemoryOfContainerAsString() string {
 	cgroup_mem_limit_fname := "/sys/fs/cgroup/memory/memory.limit_in_bytes"
 	_, err := os.Stat(cgroup_mem_limit_fname)
 	if err == nil {
 		cgroup_mem_limit, errRead := ioutil.ReadFile(cgroup_mem_limit_fname)
 		if errRead == nil {
 			cgroup_mem_limit_str := strings.Trim(string(cgroup_mem_limit), "\n")
-			if imposedLimit != "" && imposedLimit < cgroup_mem_limit_str {
-				log.Printf("WARNING: Imposing memory limit of %s", imposedLimit)
-				return imposedLimit
-			}
 			return cgroup_mem_limit_str
 		} else {
 			return "0"
@@ -121,7 +117,7 @@ func GetMaxMemoryOfContainerAsString(imposedLimit string) string {
 func (memValue *MemValue) LessThan(otherValue *MemValue) bool {
 	if memValue.Converted &&
 		otherValue.Converted &&
-		memValue.IntMemsize < otherValue.IntMemsize {
+		memValue.ActualIntMemsize < otherValue.ActualIntMemsize {
 		return true
 	}
 	return false

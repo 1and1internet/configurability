@@ -121,10 +121,13 @@ func OurConfigFileName(configurationFileName string) bool {
 }
 
 func (allInfo *CustomisationInfo) SetMaxMemory() {
+	imposedMaxMemValue := plugins.GetMemoryValue("17179869184")
 	allInfo.MaxMemory = plugins.GetMemoryValue(
-		plugins.GetMaxMemoryOfContainerAsString("17179869184"),
+		plugins.GetMaxMemoryOfContainerAsString(),
 	)
-	allInfo.MaxMemory.MemStrToMemValue()
+	if imposedMaxMemValue.LessThan(allInfo.MaxMemory) {
+		allInfo.MaxMemory = imposedMaxMemValue
+	}
 }
 
 func (allInfo *CustomisationInfo) ApplyCustomisations() {
@@ -311,7 +314,7 @@ func (confline *ConfigLine) SetMemVal(value, defaultValue, min, max string, syst
 	}
 
 	if value != confline.Value {
-		confline.Value = memValue.CorrectStrValue
+		confline.Value = memValue.CorrectOptimisedStrValue
 		confline.UseOrig = false
 	}
 }

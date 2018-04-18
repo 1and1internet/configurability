@@ -173,7 +173,7 @@ func (mongoData *MongoData) LoadConfig(section ini.Section) bool {
 
 func (mongoData *MongoData) ApplyLocalStorageWiredTigerConfig() {
 	mongoData.Config.Storage.WiredTiger.EngineConfig.CacheSizeGB = 0.25
-	cgroup_mem_limit_str := plugins.GetMaxMemoryOfContainerAsString("")
+	cgroup_mem_limit_str := plugins.GetMaxMemoryOfContainerAsString()
 	cgroup_mem_limit_int, err := strconv.Atoi(cgroup_mem_limit_str)
 	if err == nil {
 		new_limit := float32((cgroup_mem_limit_int / 1024 / 1024 / 2) - 1024)
