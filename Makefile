@@ -1,4 +1,4 @@
-PLUGINS = apache2 basic mysql nginx php mongod java8 postgresql10
+PLUGINS = apache2 basic mysql nginx php mongod java8 postgresql10 php_opcache
 MAIN_FOLDER = bin
 PLUGINS_FOLDER = bin/plugins
 
@@ -17,6 +17,3 @@ plugins: ${PLUGINS_FOLDER} ${PLUGINS}
 
 ${PLUGINS}:
 	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/$@.so plugins/$@/$@.go
-
-php_nextcloud:
-	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/php.so plugins/php_nextcloud/php.go
