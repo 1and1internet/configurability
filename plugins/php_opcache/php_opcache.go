@@ -26,7 +26,6 @@ func (opcache *OpcacheParserData) OpcacheJsonLoader(data []byte) {
 	opcache.JsonData.OpCache.OpCacheMemory = 128
 	opcache.JsonData.OpCache.OpCacheRevalidateFreq = 2
 	opcache.JsonData.OpCache.OpCacheEnableCli = false
-	log.Printf("%v", string(data))
 	err := json.Unmarshal(data, &opcache.JsonData)
 	if err != nil {
 		log.Fatalf("error: %v", err)
