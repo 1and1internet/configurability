@@ -10,9 +10,9 @@ import (
 
 type OpcacheJsonData struct {
 	OpCache struct {
-		OpCacheMemory         string `json:"php_opcache.memory_consumption"`
-		OpCacheRevalidateFreq int64 `json:"php_opcache.revalidate_freq"`
-		OpCacheEnableCli	  bool `json:"php_opcache.enable_cli"`
+		OpCacheMemory         int64 `json:"opcache.memory_consumption"`
+		OpCacheRevalidateFreq int64 `json:"opcache.revalidate_freq"`
+		OpCacheEnableCli	  bool `json:"opcache.enable_cli"`
 	}
 }
 
@@ -23,9 +23,10 @@ type OpcacheParserData struct {
 
 func (opcache *OpcacheParserData) OpcacheJsonLoader(data []byte) {
 	// Set some defaults
-	opcache.JsonData.OpCache.OpCacheMemory = "128"
+	opcache.JsonData.OpCache.OpCacheMemory = 128
 	opcache.JsonData.OpCache.OpCacheRevalidateFreq = 2
 	opcache.JsonData.OpCache.OpCacheEnableCli = false
+	log.Printf("%v", string(data))
 	err := json.Unmarshal(data, &opcache.JsonData)
 	if err != nil {
 		log.Fatalf("error: %v", err)
@@ -37,7 +38,7 @@ func (opcache *OpcacheParserData) ApplyCustomisations() {
 	if iniFile != nil {
 		opcache_section, err := iniFile.GetSection("")
 		if err == nil {
-			plugins.UpdateStringKey("Opcache", opcache_section, "opcache.memory_consumption", opcache.JsonData.OpCache.OpCacheMemory)
+			plugins.UpdateInt64Key("Opcache", opcache_section, "opcache.memory_consumption", opcache.JsonData.OpCache.OpCacheMemory)
 			plugins.UpdateInt64Key("Opcache", opcache_section, "opcache.revalidate_freq", opcache.JsonData.OpCache.OpCacheRevalidateFreq)
 			plugins.UpdateBoolKey("Opcache", opcache_section, "opcache.enable_cli", opcache.JsonData.OpCache.OpCacheEnableCli)
 		}
@@ -46,7 +47,7 @@ func (opcache *OpcacheParserData) ApplyCustomisations() {
 }
 
 func Customise(content []byte, section *ini.Section, configurationFileName string) (bool) {
-	if configurationFileName == "configuration-php.json" {
+	if configurationFileName == "configuration-php-opcache.json" {
 		log.Println("Process as php-opcache/json")
 		php := OpcacheParserData{}
 		php.OpcacheJsonLoader(content)
