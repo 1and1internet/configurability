@@ -17,3 +17,6 @@ plugins: ${PLUGINS_FOLDER} ${PLUGINS}
 
 ${PLUGINS}:
 	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/$@.so plugins/$@/$@.go
+
+php_nextcloud:
+	go build -buildmode=plugin -o ${PLUGINS_FOLDER}/php.so plugins/php_nextcloud/php.go

@@ -100,7 +100,7 @@ export CONFIGURABILITY_DIR=testfiles/customisations
 export CONF_PLUGIN_FOLDER=bin/plugins
 export CONFIGURABILITY_INTERNAL=testfiles/etc_configuration
 export TEST_INPUT_FOLDER=testfiles/source_config
-export TEST_OUTPUT_FOLDER=/tmp/output
+export TEST_OUTPUT_FOLDER=testfiles/output
 ```
 
 **NOTE**: Under normal operation $TEST_OUTPUT_FOLDER and
