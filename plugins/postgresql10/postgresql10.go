@@ -319,13 +319,29 @@ func (confline *ConfigLine) SetMemVal(value, deflt, min, max string, systemMax p
 	}
 }
 
+func (allInfo *CustomisationInfo) AddConflineIfMissing(key string) {
+	if allInfo.ParsedConfLineMap[key] == nil {
+		aConfline := ConfigLine{
+			OrigLine:         "",
+			UseOrig:          true,
+			Key:              key,
+			Value:            "",
+			PostValueComment: "",
+		}
+		allInfo.ParsedConfLines = append(allInfo.ParsedConfLines, &aConfline)
+		allInfo.ParsedConfLineMap[key] = &aConfline
+	}
+}
+
 func (allInfo *CustomisationInfo) MaxConnections() {
+	allInfo.AddConflineIfMissing("max_connections")
 	allInfo.ParsedConfLineMap["max_connections"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MaxConnections, 100, 1, 100000,
 	)
 }
 
 func (allInfo *CustomisationInfo) SuperuserReservedConnections() {
+	allInfo.AddConflineIfMissing("superuser_reserved_connections")
 	allInfo.ParsedConfLineMap["superuser_reserved_connections"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.SuperuserReservedConnections,
 		3,
@@ -335,6 +351,7 @@ func (allInfo *CustomisationInfo) SuperuserReservedConnections() {
 }
 
 func (allInfo *CustomisationInfo) SharedBuffers() {
+	allInfo.AddConflineIfMissing("shared_buffers")
 	allInfo.ParsedConfLineMap["shared_buffers"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.SharedBuffers,
 		"128MB",
@@ -345,12 +362,14 @@ func (allInfo *CustomisationInfo) SharedBuffers() {
 }
 
 func (allInfo *CustomisationInfo) HugePages() {
+	allInfo.AddConflineIfMissing("huge_pages")
 	allInfo.ParsedConfLineMap["huge_pages"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.HugePages, "try",
 	)
 }
 
 func (allInfo *CustomisationInfo) MaxPreparedTransactions() {
+	allInfo.AddConflineIfMissing("max_prepared_transactions")
 	allInfo.ParsedConfLineMap["max_prepared_transactions"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MaxPreparedTransactions,
 		0,
@@ -360,6 +379,7 @@ func (allInfo *CustomisationInfo) MaxPreparedTransactions() {
 }
 
 func (allInfo *CustomisationInfo) WorkMem() {
+	allInfo.AddConflineIfMissing("work_mem")
 	allInfo.ParsedConfLineMap["work_mem"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WorkMem,
 		"4MB",
@@ -370,6 +390,7 @@ func (allInfo *CustomisationInfo) WorkMem() {
 }
 
 func (allInfo *CustomisationInfo) MaintenanceWorkMem() {
+	allInfo.AddConflineIfMissing("maintenance_work_mem")
 	allInfo.ParsedConfLineMap["maintenance_work_mem"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MaintenanceWorkMem,
 		"64MB",
@@ -380,6 +401,7 @@ func (allInfo *CustomisationInfo) MaintenanceWorkMem() {
 }
 
 func (allInfo *CustomisationInfo) ReplacementSortTuples() {
+	allInfo.AddConflineIfMissing("replacement_sort_tuples")
 	allInfo.ParsedConfLineMap["replacement_sort_tuples"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.ReplacementSortTuples,
 		150000,
@@ -389,6 +411,7 @@ func (allInfo *CustomisationInfo) ReplacementSortTuples() {
 }
 
 func (allInfo *CustomisationInfo) MaxStackDepth() {
+	allInfo.AddConflineIfMissing("max_stack_depth")
 	allInfo.ParsedConfLineMap["max_stack_depth"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MaxStackDepth,
 		"2MB",
@@ -399,6 +422,7 @@ func (allInfo *CustomisationInfo) MaxStackDepth() {
 }
 
 func (allInfo *CustomisationInfo) VacuumCostDelay() {
+	allInfo.AddConflineIfMissing("vacuum_cost_delay")
 	allInfo.ParsedConfLineMap["vacuum_cost_delay"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.VacuumCostDelay,
 		"0",
@@ -408,6 +432,7 @@ func (allInfo *CustomisationInfo) VacuumCostDelay() {
 }
 
 func (allInfo *CustomisationInfo) VacuumCostPageHit() {
+	allInfo.AddConflineIfMissing("vacuum_cost_page_hit")
 	allInfo.ParsedConfLineMap["vacuum_cost_page_hit"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.VacuumCostPageHit,
 		1,
@@ -417,6 +442,7 @@ func (allInfo *CustomisationInfo) VacuumCostPageHit() {
 }
 
 func (allInfo *CustomisationInfo) VacuumCostPageMiss() {
+	allInfo.AddConflineIfMissing("vacuum_cost_page_miss")
 	allInfo.ParsedConfLineMap["vacuum_cost_page_miss"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.VacuumCostPageMiss,
 		10,
@@ -426,6 +452,7 @@ func (allInfo *CustomisationInfo) VacuumCostPageMiss() {
 }
 
 func (allInfo *CustomisationInfo) VacuumCostPageDirty() {
+	allInfo.AddConflineIfMissing("vacuum_cost_page_dirty")
 	allInfo.ParsedConfLineMap["vacuum_cost_page_dirty"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.VacuumCostPageDirty,
 		20,
@@ -435,6 +462,7 @@ func (allInfo *CustomisationInfo) VacuumCostPageDirty() {
 }
 
 func (allInfo *CustomisationInfo) VacuumCostLimit() {
+	allInfo.AddConflineIfMissing("vacuum_cost_limit")
 	allInfo.ParsedConfLineMap["vacuum_cost_limit"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.VacuumCostLimit,
 		200,
@@ -444,6 +472,7 @@ func (allInfo *CustomisationInfo) VacuumCostLimit() {
 }
 
 func (allInfo *CustomisationInfo) BgwriterDelay() {
+	allInfo.AddConflineIfMissing("bgwriter_delay")
 	allInfo.ParsedConfLineMap["bgwriter_delay"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.BgwriterDelay,
 		"200ms",
@@ -453,6 +482,7 @@ func (allInfo *CustomisationInfo) BgwriterDelay() {
 }
 
 func (allInfo *CustomisationInfo) BgwriterLruMaxpages() {
+	allInfo.AddConflineIfMissing("bgwriter_lru_maxpages")
 	allInfo.ParsedConfLineMap["bgwriter_lru_maxpages"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.BgwriterLruMaxpages,
 		100,
@@ -462,6 +492,7 @@ func (allInfo *CustomisationInfo) BgwriterLruMaxpages() {
 }
 
 func (allInfo *CustomisationInfo) BgwriterLruMultiplier() {
+	allInfo.AddConflineIfMissing("bgwriter_lru_multiplier")
 	allInfo.ParsedConfLineMap["bgwriter_lru_multiplier"].SetFloatVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.BgwriterLruMultiplier,
 		"2.0",
@@ -471,36 +502,42 @@ func (allInfo *CustomisationInfo) BgwriterLruMultiplier() {
 }
 
 func (allInfo *CustomisationInfo) WalLevel() {
+	allInfo.AddConflineIfMissing("wal_level")
 	allInfo.ParsedConfLineMap["wal_level"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalLevel, "replica",
 	)
 }
 
 func (allInfo *CustomisationInfo) SynchronousCommit() {
+	allInfo.AddConflineIfMissing("synchronous_commit")
 	allInfo.ParsedConfLineMap["synchronous_commit"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.SynchronousCommit, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) WalSyncMethod() {
+	allInfo.AddConflineIfMissing("wal_sync_method")
 	allInfo.ParsedConfLineMap["wal_sync_method"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalSyncMethod, "fdatasync",
 	)
 }
 
 func (allInfo *CustomisationInfo) WalLogHints() {
+	allInfo.AddConflineIfMissing("wal_log_hints")
 	allInfo.ParsedConfLineMap["wal_log_hints"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalLogHints, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) WalCompression() {
+	allInfo.AddConflineIfMissing("wal_compression")
 	allInfo.ParsedConfLineMap["wal_compression"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalCompression, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) WalWriterDelay() {
+	allInfo.AddConflineIfMissing("wal_writer_delay")
 	allInfo.ParsedConfLineMap["wal_writer_delay"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalWriterDelay,
 		"200ms",
@@ -510,6 +547,7 @@ func (allInfo *CustomisationInfo) WalWriterDelay() {
 }
 
 func (allInfo *CustomisationInfo) WalWriterFlushAfter() {
+	allInfo.AddConflineIfMissing("wal_writer_flush_after")
 	allInfo.ParsedConfLineMap["wal_writer_flush_after"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.WalWriterFlushAfter,
 		"1MB",
@@ -520,6 +558,7 @@ func (allInfo *CustomisationInfo) WalWriterFlushAfter() {
 }
 
 func (allInfo *CustomisationInfo) CommitDelay() {
+	allInfo.AddConflineIfMissing("commit_delay")
 	allInfo.ParsedConfLineMap["commit_delay"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CommitDelay,
 		0,
@@ -529,6 +568,7 @@ func (allInfo *CustomisationInfo) CommitDelay() {
 }
 
 func (allInfo *CustomisationInfo) CommitSiblings() {
+	allInfo.AddConflineIfMissing("commit_siblings")
 	allInfo.ParsedConfLineMap["commit_siblings"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CommitSiblings,
 		5,
@@ -538,6 +578,7 @@ func (allInfo *CustomisationInfo) CommitSiblings() {
 }
 
 func (allInfo *CustomisationInfo) CheckpointTimeout() {
+	allInfo.AddConflineIfMissing("checkpoint_timeout")
 	allInfo.ParsedConfLineMap["checkpoint_timeout"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CheckpointTimeout,
 		"5min",
@@ -547,6 +588,7 @@ func (allInfo *CustomisationInfo) CheckpointTimeout() {
 }
 
 func (allInfo *CustomisationInfo) CheckpointCompletionTarget() {
+	allInfo.AddConflineIfMissing("checkpoint_completion_target")
 	allInfo.ParsedConfLineMap["checkpoint_completion_target"].SetFloatVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CheckpointCompletionTarget,
 		"0.5",
@@ -556,6 +598,7 @@ func (allInfo *CustomisationInfo) CheckpointCompletionTarget() {
 }
 
 func (allInfo *CustomisationInfo) CheckpointFlushAfter() {
+	allInfo.AddConflineIfMissing("checkpoint_flush_after")
 	allInfo.ParsedConfLineMap["checkpoint_flush_after"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CheckpointFlushAfter,
 		"256kB",
@@ -566,6 +609,7 @@ func (allInfo *CustomisationInfo) CheckpointFlushAfter() {
 }
 
 func (allInfo *CustomisationInfo) CheckpointWarning() {
+	allInfo.AddConflineIfMissing("checkpoint_warning")
 	allInfo.ParsedConfLineMap["checkpoint_warning"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.CheckpointWarning,
 		"30s",
@@ -575,6 +619,7 @@ func (allInfo *CustomisationInfo) CheckpointWarning() {
 }
 
 func (allInfo *CustomisationInfo) MaxWalSize() {
+	allInfo.AddConflineIfMissing("max_wal_size")
 	allInfo.ParsedConfLineMap["max_wal_size"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MaxWalSize,
 		"1GB",
@@ -585,6 +630,7 @@ func (allInfo *CustomisationInfo) MaxWalSize() {
 }
 
 func (allInfo *CustomisationInfo) MinWalSize() {
+	allInfo.AddConflineIfMissing("min_wal_size")
 	allInfo.ParsedConfLineMap["min_wal_size"].SetMemVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.MinWalSize,
 		"80MB",
@@ -595,18 +641,21 @@ func (allInfo *CustomisationInfo) MinWalSize() {
 }
 
 func (allInfo *CustomisationInfo) ArchiveMode() {
+	allInfo.AddConflineIfMissing("archive_mode")
 	allInfo.ParsedConfLineMap["archive_mode"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.ArchiveMode, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) ArchiveCommand() {
+	allInfo.AddConflineIfMissing("archive_command")
 	allInfo.ParsedConfLineMap["archive_command"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.ArchiveCommand, "",
 	)
 }
 
 func (allInfo *CustomisationInfo) ArchiveTimeout() {
+	allInfo.AddConflineIfMissing("archive_timeout")
 	allInfo.ParsedConfLineMap["archive_timeout"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.ArchiveTimeout,
 		0,
@@ -616,102 +665,119 @@ func (allInfo *CustomisationInfo) ArchiveTimeout() {
 }
 
 func (allInfo *CustomisationInfo) EnableBitmapscan() {
+	allInfo.AddConflineIfMissing("enable_bitmapscan")
 	allInfo.ParsedConfLineMap["enable_bitmapscan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableBitmapscan, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableHashagg() {
+	allInfo.AddConflineIfMissing("enable_hashagg")
 	allInfo.ParsedConfLineMap["enable_hashagg"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableHashagg, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableHashjoin() {
+	allInfo.AddConflineIfMissing("enable_hashjoin")
 	allInfo.ParsedConfLineMap["enable_hashjoin"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableHashjoin, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableIndexscan() {
+	allInfo.AddConflineIfMissing("enable_indexscan")
 	allInfo.ParsedConfLineMap["enable_indexscan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableIndexscan, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableIndexonlyscan() {
+	allInfo.AddConflineIfMissing("enable_indexonlyscan")
 	allInfo.ParsedConfLineMap["enable_indexonlyscan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableIndexonlyscan, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableMaterial() {
+	allInfo.AddConflineIfMissing("enable_material")
 	allInfo.ParsedConfLineMap["enable_material"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableMaterial, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableMergejoin() {
+	allInfo.AddConflineIfMissing("enable_mergejoin")
 	allInfo.ParsedConfLineMap["enable_mergejoin"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableMergejoin, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableNestloop() {
+	allInfo.AddConflineIfMissing("enable_nestloop")
 	allInfo.ParsedConfLineMap["enable_nestloop"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableNestloop, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableSeqscan() {
+	allInfo.AddConflineIfMissing("enable_seqscan")
 	allInfo.ParsedConfLineMap["enable_seqscan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableSeqscan, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableSort() {
+	allInfo.AddConflineIfMissing("enable_sort")
 	allInfo.ParsedConfLineMap["enable_sort"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableSort, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) EnableTidscan() {
+	allInfo.AddConflineIfMissing("enable_tidscan")
 	allInfo.ParsedConfLineMap["enable_tidscan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.EnableTidscan, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogDestination() {
+	allInfo.AddConflineIfMissing("log_destination")
 	allInfo.ParsedConfLineMap["log_destination"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogDestination, "stderr",
 	)
 }
 
 func (allInfo *CustomisationInfo) LoggingCollector() {
+	allInfo.AddConflineIfMissing("logging_collector")
 	allInfo.ParsedConfLineMap["logging_collector"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LoggingCollector, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) ClientMinMessages() {
+	allInfo.AddConflineIfMissing("client_min_messages")
 	allInfo.ParsedConfLineMap["client_min_messages"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.ClientMinMessages, "NOTICE",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogMinMessages() {
+	allInfo.AddConflineIfMissing("log_min_messages")
 	allInfo.ParsedConfLineMap["log_min_messages"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogMinMessages, "WARNING",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogMinErrorStatement() {
+	allInfo.AddConflineIfMissing("log_min_error_statement")
 	allInfo.ParsedConfLineMap["log_min_error_statement"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogMinErrorStatement, "ERROR",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogMinDurationStatement() {
+	allInfo.AddConflineIfMissing("log_min_duration_statement")
 	allInfo.ParsedConfLineMap["log_min_duration_statement"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogMinDurationStatement,
 		-1,
@@ -721,60 +787,70 @@ func (allInfo *CustomisationInfo) LogMinDurationStatement() {
 }
 
 func (allInfo *CustomisationInfo) DebugPrintParse() {
+	allInfo.AddConflineIfMissing("debug_print_parse")
 	allInfo.ParsedConfLineMap["debug_print_parse"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.DebugPrintParse, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) DebugPrintRewritten() {
+	allInfo.AddConflineIfMissing("debug_print_rewritten")
 	allInfo.ParsedConfLineMap["debug_print_rewritten"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.DebugPrintRewritten, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) DebugPrintPlan() {
+	allInfo.AddConflineIfMissing("debug_print_plan")
 	allInfo.ParsedConfLineMap["debug_print_plan"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.DebugPrintPlan, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) DebugPrettyPrint() {
+	allInfo.AddConflineIfMissing("debug_pretty_print")
 	allInfo.ParsedConfLineMap["debug_pretty_print"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.DebugPrettyPrint, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogCheckpoints() {
+	allInfo.AddConflineIfMissing("log_checkpoints")
 	allInfo.ParsedConfLineMap["log_checkpoints"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogCheckpoints, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogConnections() {
+	allInfo.AddConflineIfMissing("log_connections")
 	allInfo.ParsedConfLineMap["log_connections"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogConnections, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogDisconnections() {
+	allInfo.AddConflineIfMissing("log_disconnections")
 	allInfo.ParsedConfLineMap["log_disconnections"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogDisconnections, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogDuration() {
+	allInfo.AddConflineIfMissing("log_duration")
 	allInfo.ParsedConfLineMap["log_duration"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogDuration, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogErrorVerbosity() {
+	allInfo.AddConflineIfMissing("log_error_verbosity")
 	allInfo.ParsedConfLineMap["log_error_verbosity"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogErrorVerbosity, "default",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogHostname() {
+	allInfo.AddConflineIfMissing("log_hostname")
 	allInfo.ParsedConfLineMap["log_hostname"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogHostname, "off",
 	)
@@ -787,18 +863,21 @@ func (allInfo *CustomisationInfo) LogHostname() {
 //}
 
 func (allInfo *CustomisationInfo) LogLockWaits() {
+	allInfo.AddConflineIfMissing("log_lock_waits")
 	allInfo.ParsedConfLineMap["log_lock_waits"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogLockWaits, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogStatement() {
+	allInfo.AddConflineIfMissing("log_statement")
 	allInfo.ParsedConfLineMap["log_statement"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogStatement, "none",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogTempFiles() {
+	allInfo.AddConflineIfMissing("log_temp_files")
 	allInfo.ParsedConfLineMap["log_temp_files"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogTempFiles,
 		-1,
@@ -808,30 +887,35 @@ func (allInfo *CustomisationInfo) LogTempFiles() {
 }
 
 func (allInfo *CustomisationInfo) TrackActivities() {
+	allInfo.AddConflineIfMissing("track_activities")
 	allInfo.ParsedConfLineMap["track_activities"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.TrackActivities, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) TrackCounts() {
+	allInfo.AddConflineIfMissing("track_counts")
 	allInfo.ParsedConfLineMap["track_counts"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.TrackCounts, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) TrackIoTiming() {
+	allInfo.AddConflineIfMissing("track_io_timing")
 	allInfo.ParsedConfLineMap["track_io_timing"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.TrackIoTiming, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) TrackFunctions() {
+	allInfo.AddConflineIfMissing("track_functions")
 	allInfo.ParsedConfLineMap["track_functions"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.TrackFunctions, "none",
 	)
 }
 
 func (allInfo *CustomisationInfo) TrackActivityQuerySize() {
+	allInfo.AddConflineIfMissing("track_activity_query_size")
 	allInfo.ParsedConfLineMap["track_activity_query_size"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.TrackActivityQuerySize,
 		1024,
@@ -841,36 +925,42 @@ func (allInfo *CustomisationInfo) TrackActivityQuerySize() {
 }
 
 func (allInfo *CustomisationInfo) LogParserStats() {
+	allInfo.AddConflineIfMissing("log_parser_stats")
 	allInfo.ParsedConfLineMap["log_parser_stats"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogParserStats, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogPlannerStats() {
+	allInfo.AddConflineIfMissing("log_planner_stats")
 	allInfo.ParsedConfLineMap["log_planner_stats"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogPlannerStats, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogExecutorStats() {
+	allInfo.AddConflineIfMissing("log_executor_stats")
 	allInfo.ParsedConfLineMap["log_executor_stats"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogExecutorStats, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogStatementStats() {
+	allInfo.AddConflineIfMissing("log_statement_stats")
 	allInfo.ParsedConfLineMap["log_statement_stats"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogStatementStats, "off",
 	)
 }
 
 func (allInfo *CustomisationInfo) Autovacuum() {
+	allInfo.AddConflineIfMissing("autovacuum")
 	allInfo.ParsedConfLineMap["autovacuum"].SetStrVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.Autovacuum, "on",
 	)
 }
 
 func (allInfo *CustomisationInfo) LogAutovacuumMinDuration() {
+	allInfo.AddConflineIfMissing("log_autovacuum_min_duration")
 	allInfo.ParsedConfLineMap["log_autovacuum_min_duration"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.LogAutovacuumMinDuration,
 		-1,
@@ -880,6 +970,7 @@ func (allInfo *CustomisationInfo) LogAutovacuumMinDuration() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumMaxWorkers() {
+	allInfo.AddConflineIfMissing("autovacuum_max_workers")
 	allInfo.ParsedConfLineMap["autovacuum_max_workers"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumMaxWorkers,
 		3,
@@ -889,6 +980,7 @@ func (allInfo *CustomisationInfo) AutovacuumMaxWorkers() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumNaptime() {
+	allInfo.AddConflineIfMissing("autovacuum_naptime")
 	allInfo.ParsedConfLineMap["autovacuum_naptime"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumNaptime,
 		"1min",
@@ -898,6 +990,7 @@ func (allInfo *CustomisationInfo) AutovacuumNaptime() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumVacuumThreshold() {
+	allInfo.AddConflineIfMissing("autovacuum_vacuum_threshold")
 	allInfo.ParsedConfLineMap["autovacuum_vacuum_threshold"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumVacuumThreshold,
 		50,
@@ -907,6 +1000,7 @@ func (allInfo *CustomisationInfo) AutovacuumVacuumThreshold() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumAnalyzeThreshold() {
+	allInfo.AddConflineIfMissing("autovacuum_analyze_threshold")
 	allInfo.ParsedConfLineMap["autovacuum_analyze_threshold"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumAnalyzeThreshold,
 		50,
@@ -916,6 +1010,7 @@ func (allInfo *CustomisationInfo) AutovacuumAnalyzeThreshold() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumVacuumScaleFactor() {
+	allInfo.AddConflineIfMissing("autovacuum_vacuum_scale_factor")
 	allInfo.ParsedConfLineMap["autovacuum_vacuum_scale_factor"].SetFloatVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumVacuumScaleFactor,
 		"0.2",
@@ -925,6 +1020,7 @@ func (allInfo *CustomisationInfo) AutovacuumVacuumScaleFactor() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumAnalyzeScaleFactor() {
+	allInfo.AddConflineIfMissing("autovacuum_analyze_scale_factor")
 	allInfo.ParsedConfLineMap["autovacuum_analyze_scale_factor"].SetFloatVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumAnalyzeScaleFactor,
 		"0.1",
@@ -934,6 +1030,7 @@ func (allInfo *CustomisationInfo) AutovacuumAnalyzeScaleFactor() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumFreezeMaxAge() {
+	allInfo.AddConflineIfMissing("autovacuum_freeze_max_age")
 	allInfo.ParsedConfLineMap["autovacuum_freeze_max_age"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumFreezeMaxAge,
 		200000000,
@@ -943,6 +1040,7 @@ func (allInfo *CustomisationInfo) AutovacuumFreezeMaxAge() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumMultixactFreezeMaxAge() {
+	allInfo.AddConflineIfMissing("autovacuum_multixact_freeze_max_age")
 	allInfo.ParsedConfLineMap["autovacuum_multixact_freeze_max_age"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumMultixactFreezeMaxAge,
 		400000000,
@@ -952,6 +1050,7 @@ func (allInfo *CustomisationInfo) AutovacuumMultixactFreezeMaxAge() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumVacuumCostDelay() {
+	allInfo.AddConflineIfMissing("autovacuum_vacuum_cost_delay")
 	allInfo.ParsedConfLineMap["autovacuum_vacuum_cost_delay"].SetTimeVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumVacuumCostDelay,
 		"20ms",
@@ -961,6 +1060,7 @@ func (allInfo *CustomisationInfo) AutovacuumVacuumCostDelay() {
 }
 
 func (allInfo *CustomisationInfo) AutovacuumVacuumCostLimit() {
+	allInfo.AddConflineIfMissing("autovacuum_vacuum_cost_limit")
 	allInfo.ParsedConfLineMap["autovacuum_vacuum_cost_limit"].SetIntVal(
 		allInfo.PostgreSqlRequestedConfig.PostgreSQLConf.AutovacuumVacuumCostLimit,
 		-1,
