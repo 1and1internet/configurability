@@ -89,7 +89,7 @@ func (php *PhpParserData) ApplyCustomisations() {
 			plugins.UpdateStringKey("PHP", opcache_section, "php_opcache.memory_consumption", php.JsonData.OpCache.OpCacheMemory)
 		}
 
-			plugins.SaveIniFile(*iniFile, iniFilePath, "php.ini")
+		plugins.SaveIniFile(*iniFile, iniFilePath, "php.ini")
 	}
 }
 

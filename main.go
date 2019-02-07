@@ -36,9 +36,6 @@ func LoadCustomisationData(customisorSymbol plugin.Symbol, etcConfigSections []*
 			}
 
 			customised = customisorSymbol.(func([]byte, *ini.Section, string) bool)(content, section, configuration_file_name.String())
-			if customised {
-				break
-			}
 		}
 	}
 	return customised
