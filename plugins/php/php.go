@@ -2,10 +2,11 @@ package main
 
 import (
 	"C"
-	"github.com/go-ini/ini"
 	"encoding/json"
-	"log"
+	"fmt"
 	"github.com/1and1internet/configurability/plugins"
+	"github.com/go-ini/ini"
+	"log"
 )
 
 type PhpJsonData struct {
@@ -52,6 +53,12 @@ func (php *PhpParserData) PhpJsonLoader(data []byte) {
 
 func (php *PhpParserData) ApplyCustomisations() {
 	_, iniFile, iniFilePath := plugins.UnpackEtcIni(php.Section, false)
+	session, err := iniFile.GetSection("Session")
+	if err == nil && session.HasKey("session.trans_sid_tags") {
+		// HACK: This value gets it's quotes stripped, so I'm putting them back...
+		val := fmt.Sprintf("\"%s\"", session.Key("session.trans_sid_tags"))
+		session.NewKey("session.trans_sid_tags", val)
+	}
 	if iniFile != nil {
 		php_section, err := iniFile.GetSection("PHP")
 		if err == nil {
