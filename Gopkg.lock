@@ -2,20 +2,20 @@
 
 
 [[projects]]
-  digest = "1:3417a5d11889cd6649cad66e05b7104e0937839ab23a6c4803fddf7f1e4fc412"
+  digest = "1:8b4bb15de2e698d359eeec15c42453567c98972a70c8619946050360ec02ec32"
   name = "github.com/go-ini/ini"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5e9692864e22d02ac79e2fa499cffb00520b4fea"
-  version = "v1.34.0"
+  revision = "6ed8d5f64cd79a498d1f3fab5880cc376ce41bbe"
+  version = "v1.41.0"
 
 [[projects]]
-  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
