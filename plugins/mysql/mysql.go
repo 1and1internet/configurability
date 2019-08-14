@@ -61,6 +61,9 @@ func (mysql *MysqlParserData) ApplyCustomisations() {
 	if iniFile != nil {
 		mysqld, err := iniFile.GetSection("mysqld")
 		if err == nil {
+			if mysql.JsonData.Mysqld.DefaultTimeZone == "" {
+				mysql.JsonData.Mysqld.DefaultTimeZone = "SYSTEM"
+			}
 			plugins.UpdateBoolKey("MYSQL", mysqld, "read_only", mysql.JsonData.Mysqld.ReadOnly)
 			plugins.UpdateBoolKey("MYSQL", mysqld, "transaction_read_only", mysql.JsonData.Mysqld.TransactionReadOnly)
 			plugins.UpdateBoolKey("MYSQL", mysqld, "autocommit", mysql.JsonData.Mysqld.AutoCommit)
